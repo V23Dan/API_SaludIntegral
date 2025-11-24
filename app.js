@@ -15,6 +15,7 @@ const app = express();
 const corsOp = {
     origin: "https://salud-integral-afa04.web.app",
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }
 
 app.use(cors(corsOp));
