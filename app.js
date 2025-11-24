@@ -13,7 +13,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 const corsOp = {
-    origin: "http://localhost:4200",
+    origin: "*",
     credentials: true,
 }
 
