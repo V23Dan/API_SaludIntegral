@@ -73,11 +73,9 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   const { correo, pass } = req.body;
-  console.log("Datos recibidos del login", req.body);
-
+  
   try {
     const existingUser = await User.findOne({ correo });
-    console.log("Uuario encontrado con correo: ", existingUser.correo);
 
     if (!existingUser) {
       return res.status(400).json({
@@ -87,31 +85,38 @@ export const loginUser = async (req, res) => {
     }
 
     if (pass !== existingUser.pass) {
-      return res
-        .status(400)
-        .json({ message: "Documento o contraseña incorrectos" });
+      return res.status(400).json({ 
+        success: false,
+        message: "Correo o contraseña incorrectos" 
+      });
     }
 
     const inforUser = {
-      id: existingUser.id,
-      documento: existingUser.documento,
+      id: existingUser._id, 
+      role: existingUser.tipoUsuario 
     };
 
     const token = jwt.sign(inforUser, secretKey, { expiresIn: "1d" });
 
     res.cookie("authToken", token, {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: "none",
+      secure: true, 
+      sameSite: "none", 
       maxAge: 24 * 60 * 60 * 1000,
       path: "/",
     });
 
-    return res.json({ token });
+    return res.json({ 
+      success: true, 
+      message: "Login exitoso",
+      token 
+    });
+
   } catch (error) {
-    res.status(400).json({
+    console.error("Error en login:", error); 
+    return res.status(500).json({ 
       success: false,
-      message: "Error al loguear usuario",
+      message: "Error interno al loguear usuario",
     });
   }
 };
