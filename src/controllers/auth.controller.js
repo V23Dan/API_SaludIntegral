@@ -73,7 +73,7 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   const { correo, pass } = req.body;
-  
+
   try {
     const existingUser = await User.findOne({ correo });
 
@@ -85,36 +85,35 @@ export const loginUser = async (req, res) => {
     }
 
     if (pass !== existingUser.pass) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: "Correo o contraseña incorrectos" 
+        message: "Correo o contraseña incorrectos",
       });
     }
 
     const inforUser = {
-      id: existingUser._id, 
-      role: existingUser.tipoUsuario 
+      id: existingUser._id,
+      role: existingUser.tipoUsuario,
     };
 
     const token = jwt.sign(inforUser, secretKey, { expiresIn: "1d" });
 
     res.cookie("authToken", token, {
       httpOnly: true,
-      secure: true, 
-      sameSite: "none", 
+      secure: true,
+      sameSite: "none",
       maxAge: 24 * 60 * 60 * 1000,
       path: "/",
     });
 
-    return res.json({ 
-      success: true, 
+    return res.json({
+      success: true,
       message: "Login exitoso",
-      token 
+      token,
     });
-
   } catch (error) {
-    console.error("Error en login:", error); 
-    return res.status(500).json({ 
+    console.error("Error en login:", error);
+    return res.status(500).json({
       success: false,
       message: "Error interno al loguear usuario",
     });
@@ -122,7 +121,13 @@ export const loginUser = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie("authToken");
+  res.cookie("authToken", "", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    maxAge: 0, 
+  });
   res.status(200).json({ message: "Logout exitoso" });
 };
 
