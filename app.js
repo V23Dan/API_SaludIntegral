@@ -13,7 +13,7 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 const corsOp = {
-    origin: "*",
+    origin: "https://salud-integral-afa04.web.app",
     credentials: true,
 }
 
